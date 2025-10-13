@@ -7,13 +7,20 @@ const userStore = createSlice({
     //
     initialState:{
         //后端传过来的格式就是token的数值
-        token: ""
+        token: localStorage.getItem('token_key') || null, 
     },
 
     //同步修改方法
     reducers:{
         setToken(state, action){
             state.token = action.payload
+
+            //在localstorage存一份
+            if (action.payload) {
+                localStorage.setItem('token_key', action.payload);
+            } else {
+                localStorage.removeItem('token_key'); // 如果传入 null，则清除
+            }
         }
     }
 })
