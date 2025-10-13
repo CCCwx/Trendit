@@ -1,5 +1,6 @@
 //和用户相关的状态管理
 import { createSlice } from "@reduxjs/toolkit";
+import { request } from "@/utils";
 const userStore = createSlice({
     name:'user', //当前模块名
     
@@ -23,5 +24,13 @@ const {setToken} = userStore.actions
 //获取reducer函数
 const userReducer = userStore.reducer
 
-export {setToken}
+//异步请求
+//传我们表单收集到的数据
+const fetchLogin = (loginForm) => {
+  return async (dispatch) => {
+    const res = await request.post('/authorizations', loginForm)
+    dispatch(setToken(res.data.token))
+  }
+}
+export {fetchLogin}
 export default userReducer

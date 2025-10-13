@@ -2,18 +2,25 @@ import './index.scss'
 import { Card, Form, Input, Button } from 'antd'
 import logo from '@/assets/logo.png'
 //import background from '@/assets/background.png' // <-- 确保这个路径正确
-
+//import { useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
+import { fetchLogin } from '@/store/modules/user'
 
 const Login = () => {
+    const dispatch = useDispatch();
     const onFinish = (value) =>{
         console.log(value)
+        //触发异步action
+        dispatch(fetchLogin(value))
+
     }
     return (
         <div className="login" >
             <Card className="login-container" >
                 <img className="login-logo" src={logo} alt="" />
                 {/* 登录表单 */}
-                <Form validateTrigger="onBlur" onFinish={onFinish}>
+                {/*当我们输入内容通过所有校验逻辑 点击login之后就会触发onFinish函数，会返回一个实参，通过我们吊起来的函数中的形参value接受 */}
+                <Form validateTrigger="onBlur" onFinish={onFinish}> 
                     {/* 校验表单
                     这里name要和我们后端的接口名称保持一致 */}
                     <Form.Item
