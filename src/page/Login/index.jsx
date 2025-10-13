@@ -1,17 +1,22 @@
 import './index.scss'
-import { Card, Form, Input, Button } from 'antd'
+import { Card, Form, Input, Button, Modal } from 'antd'
 import logo from '@/assets/logo.png'
 //import background from '@/assets/background.png' // <-- 确保这个路径正确
 //import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
 import { fetchLogin } from '@/store/modules/user'
-
+import { useNavigate } from 'react-router-dom'
 const Login = () => {
     const dispatch = useDispatch();
-    const onFinish = (value) =>{
+    const navigate = useNavigate()
+    const onFinish = async (value) =>{
         console.log(value)
         //触发异步action
-        dispatch(fetchLogin(value))
+        await dispatch(fetchLogin(value))
+        //1. 跳转到首页
+        navigate('/')
+        //2. 提示用户登入成功
+        //console.success('Login Sucsess')
 
     }
     return (
