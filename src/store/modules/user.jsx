@@ -1,13 +1,16 @@
 //和用户相关的状态管理
 import { createSlice } from "@reduxjs/toolkit";
-import { request } from "@/utils";
+import {request } from "@/utils";
+import { setToken as _setToken, getToken, removeToken } from "@/utils";
+
 const userStore = createSlice({
     name:'user', //当前模块名
     
     //
     initialState:{
         //后端传过来的格式就是token的数值
-        token: localStorage.getItem('token_key') || null, 
+        //token: localStorage.getItem('token_key') || null, 
+        token: getToken() || null
     },
 
     //同步修改方法
@@ -17,9 +20,10 @@ const userStore = createSlice({
 
             //在localstorage存一份
             if (action.payload) {
-                localStorage.setItem('token_key', action.payload);
+                //localStorage.setItem('token_key', action.payload);
+                _setToken(action.payload)
             } else {
-                localStorage.removeItem('token_key'); // 如果传入 null，则清除
+                removeToken('token_key'); // 如果传入 null，则清除
             }
         }
     }
