@@ -6,29 +6,34 @@ import {
   LogoutOutlined,
 } from '@ant-design/icons'
 import './index.scss'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useNavigate} from 'react-router-dom'
 
 const { Header, Sider } = Layout
 
 const items = [
   {
     label: 'Home Page',
-    key: '1',
+    key: '/',
     icon: <HomeOutlined />,
   },
   {
     label: 'Blog Management',
-    key: '2',
+    key: '/article',
     icon: <DiffOutlined />,
   },
   {
     label: 'Create Blog',
-    key: '3',
+    key: '/publish',
     icon: <EditOutlined />,
   },
 ]
 
 const GeekLayout = () => {
+  const navigate = useNavigate()
+  const onMenuClick = (route) =>{
+    console.log(route)
+    navigate(route.key)
+  }
   return (
     <Layout>
       <Header className="header">
@@ -47,9 +52,10 @@ const GeekLayout = () => {
           <Menu
             mode="inline"
             theme="dark"
-            defaultSelectedKeys={['1']}
+            defaultSelectedKeys={['1']} 
             items={items}
-            style={{ height: '100%', borderRight: 0 }}></Menu>
+            style={{ height: '100%', borderRight: 0 }}
+            onClick = {onMenuClick}></Menu>
         </Sider>
         <Layout className="layout-content" style={{ padding: 20 }}>
           {/*二级 路由出口 */}
