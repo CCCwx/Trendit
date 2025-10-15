@@ -10,7 +10,8 @@ const userStore = createSlice({
     initialState:{
         //后端传过来的格式就是token的数值
         //token: localStorage.getItem('token_key') || null, 
-        token: getToken() || null
+        token: getToken() || null,
+        userInfo: {},
     },
 
     //同步修改方法
@@ -25,12 +26,22 @@ const userStore = createSlice({
             } else {
                 removeToken('token_key'); // 如果传入 null，则清除
             }
-        }
+        },
+
+        setUserInfo(state, action){
+            state.userInfo = action.payload
+        },
+
+        clearUserInfo(state){
+            state.token = ''
+            state.userInfo = {}
+            removeToken()
+        },
     }
 })
 
 //解构actionCreator
-const {setToken} = userStore.actions
+const {setToken, setUserInfo, clearUserInfo} = userStore.actions
 
 //获取reducer函数
 const userReducer = userStore.reducer
@@ -43,5 +54,14 @@ const fetchLogin = (loginForm) => {
     dispatch(setToken(res.data.token))
   }
 }
-export {fetchLogin}
+
+//获取个人用户信息异步方法
+const fetchuserInfo = () => {
+  return async (dispatch) => {
+    const res = await request.get('/user/profile')
+    dispatch(setUserInfo(res.data))
+  }
+}
+
+export {fetchLogin, fetchuserInfo, clearUserInfo}
 export default userReducer
