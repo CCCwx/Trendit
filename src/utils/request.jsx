@@ -1,6 +1,8 @@
 //axios的封装处理
 import axios from "axios"
 import { getToken } from "."
+import { removeToken } from "."
+import { useNavigate } from "react-router-dom"
 //1. 根域名配置
 //2. 超时时间
 //3. 请求拦截器 / 响应拦截器
@@ -44,6 +46,14 @@ request.interceptors.response.use(
     (error)=> {
     // 超出 2xx 范围的状态码都会触发该函数。
     // 对响应错误做点什么
+
+    //监控401 token失效
+    console.dir(error)
+    const navigate = useNavigate()
+    if (error.response.status === 401){
+        removeToken()
+        navigate('/login')
+    }
     return Promise.reject(error)
 })
 
