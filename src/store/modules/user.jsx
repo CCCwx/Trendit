@@ -2,7 +2,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {request } from "@/utils";
 import { setToken as _setToken, getToken, removeToken } from "@/utils";
-
+import { loginAPI, fetchUserInfoAPI } from "@/apis/user";
 const userStore = createSlice({
     name:'user', //当前模块名
     
@@ -50,7 +50,8 @@ const userReducer = userStore.reducer
 //传我们表单收集到的数据
 const fetchLogin = (loginForm) => {
   return async (dispatch) => {
-    const res = await request.post('/authorizations', loginForm)
+    //const res = await request.post('/authorizations', loginForm)
+    const res = await loginAPI(loginForm)
     dispatch(setToken(res.data.token))
   }
 }
@@ -58,7 +59,8 @@ const fetchLogin = (loginForm) => {
 //获取个人用户信息异步方法
 const fetchuserInfo = () => {
   return async (dispatch) => {
-    const res = await request.get('/user/profile')
+    //const res = await request.get('/user/profile')
+    const res = await fetchUserInfoAPI()
     dispatch(setUserInfo(res.data))
   }
 }
