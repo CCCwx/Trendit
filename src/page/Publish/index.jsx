@@ -49,7 +49,15 @@ const Publish = () => {
     //2. 调用接口
     createArticleAPI(repData)
   }
-  
+
+  //上传图的回调函数
+  const [imageList, setImageList] = useState([])
+  const onChange = (value)=>{
+    console.log('uploading')
+    console.log(value)
+    setImageList(value.fileList)
+  }
+
   return (
     <div className="publish">
       <Card
@@ -78,7 +86,7 @@ const Publish = () => {
 
          {/*频道框 */}
           <Form.Item
-            label="频道"
+            label="Channel"
             name="channel_id"
             rules={[{ required: true, message: '请选择文章频道' }]}
           >
@@ -88,8 +96,40 @@ const Publish = () => {
             </Select>
           </Form.Item>
 
+          {/*这里添加一个上传图的框 */}
+          <Form.Item label="Cover">
+            <Form.Item name="type">
+              {/*当用户选择一个 Radio 按钮时，该按钮的 value (1, 3, 或 0) 就会被收集到表单数据的 type 字段下 */}
+              <Radio.Group>
+                <Radio value={1}>Single</Radio>
+                <Radio value={3}>Triple</Radio>
+                <Radio value={0}>None</Radio>
+              </Radio.Group>
+            </Form.Item>
+            {/* 
+              listType: 决定选择文件筐的外观样式
+              showUploadList：控制显示上传列表'
+              action:指定文件上传的目标 URL 地址
+              name:指定上传文件在 HTTP POST 请求中作为哪个字段名携带。
+              onChange:当上传过程中的文件状态发生任何变化时，这个函数都会被触发。
+              当 onChange 被触发时，它会接收到一个包含当前所有文件状态信息的参数（通常是 info 对象），其中最重要的是 fileList 数组
+            */}
+            <Upload
+              listType="picture-card" 
+              showUploadList
+              action={'http://geek.itheima.net/v1_0/upload'}
+              name='image'
+              onChange={onChange}
+            >
+              <div style={{ marginTop: 8 }}> 
+                <PlusOutlined /> 
+              </div>
+            </Upload>
+          </Form.Item>
+
+
           <Form.Item
-            label="内容"
+            label="Content"
             name="content"
             rules={[{ required: true, message: '请输入文章内容' }]}
           >
@@ -104,7 +144,7 @@ const Publish = () => {
           <Form.Item wrapperCol={{ offset: 4 }}>
             <Space>
               <Button size="large" type="primary" htmlType="submit">
-                发布文章
+                Publish Blog
               </Button>
             </Space>
           </Form.Item>
