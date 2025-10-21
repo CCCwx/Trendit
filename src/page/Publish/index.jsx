@@ -15,7 +15,7 @@ import './index.scss'
 import ReactQuill from 'react-quill-new'         // 1. JS组件来自 new 包
 import 'quill/dist/quill.snow.css'        // 2. CSS样式来自 old 包
 import { useEffect, useState } from 'react'
-import { getChannelAPI } from '@/apis/articles'
+import { createArticleAPI, getChannelAPI } from '@/apis/articles'
 
 const { Option } = Select
 
@@ -31,6 +31,25 @@ const Publish = () => {
     //2. 调用函数
     getChanneList()
   }, [])
+
+  //提交表达
+  const onFinish = (formvalue) =>{
+    console.log(formvalue)
+    const {title, content, channel_id} = formvalue //解构提交表单的数据
+    //1. 按照接口文档格式处理表单数据
+    const repData = {
+      title,
+      content,
+      cover:{
+        type:0,
+        images:[]
+      },
+      channel_id
+    }
+    //2. 调用接口
+    createArticleAPI(repData)
+  }
+  
   return (
     <div className="publish">
       <Card
@@ -46,6 +65,7 @@ const Publish = () => {
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 16 }}
           initialValues={{ type: 1 }}
+          onFinish = {onFinish}
         >
         {/*标题框 */}
           <Form.Item

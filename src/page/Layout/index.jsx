@@ -42,7 +42,7 @@ const GeekLayout = () => {
   
   //得到当前用户信息
   const dispatch = useDispatch() 
-  useEffect(()=>{
+  useEffect(()=>{ 
     dispatch(fetchuserInfo())
   }, [dispatch])
 
