@@ -16,7 +16,7 @@ import ReactQuill from 'react-quill-new'         // 1. JS组件来自 new 包
 import 'quill/dist/quill.snow.css'        // 2. CSS样式来自 old 包
 import { useEffect, useState } from 'react'
 import { createArticleAPI, getChannelAPI } from '@/apis/articles'
-
+import { message } from 'antd'
 const { Option } = Select
 
 const Publish = () => {
@@ -35,14 +35,16 @@ const Publish = () => {
   //提交表达
   const onFinish = (formvalue) =>{
     console.log(formvalue)
+    //校验封面类型covertype是否和实际的图片列表imageList数量是相当的
+    if (imageList.length !== covertype) return message.warning('数量不匹配')
     const {title, content, channel_id} = formvalue //解构提交表单的数据
     //1. 按照接口文档格式处理表单数据
     const repData = {
       title,
       content,
       cover:{
-        type:0,
-        images:[]
+        type:covertype,
+        images:imageList.map(item => item.response.data.url)
       },
       channel_id
     }
@@ -59,7 +61,7 @@ const Publish = () => {
   }
 
   //根据选项模型切换封面类型（single，triple显示上传页面，否则无）
-  const [cover, setCover] = useState(0)
+  const [covertype, setCover] = useState(1)
   const onTypeChange = (info)=>{
     console.log('切换封面')
     console.log(info)
@@ -122,14 +124,14 @@ const Publish = () => {
               onChange:当上传过程中的文件状态发生任何变化时，这个函数都会被触发。
               当 onChange 被触发时，它会接收到一个包含当前所有文件状态信息的参数（通常是 info 对象），其中最重要的是 fileList 数组
             */}
-            {cover > 0 && 
+            {covertype > 0 && 
             <Upload
               listType="picture-card" 
               showUploadList
               action={'http://geek.itheima.net/v1_0/upload'}
               name='image'
               onChange={onChange}
-              maxCount={cover}
+              maxCount={covertype}
             >
               <div style={{ marginTop: 8 }}> 
                 <PlusOutlined /> 
