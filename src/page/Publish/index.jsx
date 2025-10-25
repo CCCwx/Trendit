@@ -17,21 +17,11 @@ import 'quill/dist/quill.snow.css'        // 2. CSS样式来自 old 包
 import { useEffect, useState } from 'react'
 import { createArticleAPI, getChannelAPI } from '@/apis/articles'
 import { message } from 'antd'
+import { useChannel } from '@/hooks/useChannel'
 const { Option } = Select
 
 const Publish = () => {
-  //获取频道列表
-  const [channel, setChannel] = useState([])
-  useEffect(()=>{
-    //1. 封装一下函数 在函数体内调用接口
-    const getChanneList = async () =>{
-      const res = await getChannelAPI()
-      setChannel(res.data.channels)
-    }
-    //2. 调用函数
-    getChanneList()
-  }, [])
-
+  const {channel} = useChannel()
   //提交表达
   const onFinish = (formvalue) =>{
     console.log(formvalue)
