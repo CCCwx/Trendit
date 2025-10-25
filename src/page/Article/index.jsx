@@ -14,9 +14,14 @@ import { useState, useEffect } from 'react'
 const Article = () => {
   const {channel} = useChannel()
     // 准备列数据
+    //定义一个枚举
+  const status ={
+    1: <Tag color="warning">Under review</Tag>,
+    2: <Tag color="success">Approved</Tag>
+  }
   const columns = [
     {
-      title: '封面',
+      title: 'Cover',
       dataIndex: 'cover',
       width: 120,
       render: cover => {
@@ -24,33 +29,35 @@ const Article = () => {
       }
     },
     {
-      title: '标题',
+      title: 'Title',
       dataIndex: 'title',
       width: 220
     },
     {
-      title: '状态',
+      title: 'Status',
       dataIndex: 'status',
-      render: data => <Tag color="green">审核通过</Tag>
+      //data - 后端返回的状态statud，根据他做条件渲染
+      // 如果data === 1 :待审核 ；data === 2：审核通过
+      render: data => status[data]
     },
     {
-      title: '发布时间',
+      title: 'Publish Date',
       dataIndex: 'pubdate'
     },
     {
-      title: '阅读数',
+      title: 'Read Count',
       dataIndex: 'read_count'
     },
     {
-      title: '评论数',
+      title: 'Commnet Count',
       dataIndex: 'comment_count'
     },
     {
-      title: '点赞数',
+      title: 'Like Count',
       dataIndex: 'like_count'
     },
     {
-      title: '操作',
+      title: 'Operation',
       render: data => {
         return (
           <Space size="middle">
