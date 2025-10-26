@@ -11,6 +11,7 @@ import img404 from 'D:/reactStudy/react-blog/src/assets/spiderman.jpg'
 import { useChannel } from '@/hooks/useChannel'
 import { getArticleListAPI,deleteArticleListAPI } from '@/apis/articles'
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 const Article = () => {
   const {channel} = useChannel()
     // 准备列数据
@@ -19,6 +20,8 @@ const Article = () => {
     1: <Tag color="warning">Under review</Tag>,
     2: <Tag color="success">Approved</Tag>
   }
+  
+  const navigate = useNavigate()
   const columns = [
     {
       title: 'Cover',
@@ -61,7 +64,7 @@ const Article = () => {
       render: data => {
         return (
           <Space size="middle">
-            <Button type="primary" shape="circle" icon={<EditOutlined />} />
+            <Button type="primary" shape="circle" icon={<EditOutlined />} onClick={() => navigate(`/publish?id=${data.id}`)}/>
             <Popconfirm
               title="Delete the task"
               description="Are you sure to delete this task?"
