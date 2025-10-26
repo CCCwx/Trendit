@@ -15,7 +15,7 @@ import './index.scss'
 import ReactQuill from 'react-quill-new'         // 1. JS组件来自 new 包
 import 'quill/dist/quill.snow.css'        // 2. CSS样式来自 old 包
 import { useEffect, useState } from 'react'
-import { createArticleAPI, getChannelAPI,getArticleAPI } from '@/apis/articles'
+import { createArticleAPI, getChannelAPI,getArticleAPI, updaterticleAPI } from '@/apis/articles'
 import { message } from 'antd'
 import { useChannel } from '@/hooks/useChannel'
 const { Option } = Select
@@ -34,12 +34,27 @@ const Publish = () => {
       content,
       cover:{
         type:covertype,
-        images:imageList.map(item => item.response.data.url)
+        //这里的url逻辑只适用于第一次新增文章的情况
+        //编辑的时候需要做适配
+        images:imageList.map(item => {
+          if (item.response){
+            return item.response.data.url
+          }else {
+            return item.url
+          }
+        })
       },
       channel_id
     }
     //2. 调用接口
-    createArticleAPI(repData)
+    //处理调用不同的接口，新增-新增接口; 编辑状态-更新接口 
+    if (articleID){
+      //更新接口
+      updaterticleAPI({...repData, id: articleID})
+    }else{
+      createArticleAPI(repData)
+    }
+    
   }
 
   //上传图的回调函数

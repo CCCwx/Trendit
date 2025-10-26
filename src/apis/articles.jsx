@@ -44,3 +44,13 @@ export function getArticleAPI(id){
         method:'GET'
     })
 }
+
+//6. 更新文章接口
+export function updaterticleAPI(repData){
+    return request({
+        url:`mp/articles/${repData.id}?draft=false`,
+        method:'PUT',
+        //data:publishForm
+        data: repData
+    })
+}
