@@ -89,19 +89,57 @@ const Article = () => {
     }
   ]
 
+  //筛选功能
+  //1.准备参数
+  const [repData, setRepData] = useState({
+    status:'',
+    channel_id:'',
+    begin_pubdate:'',
+    end_pubdate:'',
+    page:1,
+    per_page: 4
+  })
+
   //获取文章列表
   const [articleList, setArticleList] = useState([])
   const [count, setCount] = useState(0)
   useEffect(() =>{
     async function getList(){
-      const res = await getArticleListAPI()
+      const res = await getArticleListAPI(repData)
       //console.log(res.data.results)
       setArticleList(res.data.results)
       setCount(res.data.total_count)
     }
     getList()
-  }, [])
+  }, [repData])
+   
+  //2. 获取当前的筛选数据
+  const onFinish = (formValue) =>{
+    console.log(formValue)
+    const { channel_id, status, date } = formValue
+    let begin_pubdate = ''
+    let end_pubdate = ''
 
+    if (date && date.length === 2) {
+      begin_pubdate = date[0].format('YYYY-MM-DD')
+      end_pubdate = date[1].format('YYYY-MM-DD')
+  }
+    //3. 把表单数据放到请求接口对应的字段中(不可变的格式)
+    setRepData({
+      ...repData,
+      page: 1, // 新筛选条件生效，页码重置为第1页
+      channel_id: channel_id || '', // 确保空选项被视为 ''
+      status: status,
+      begin_pubdate, // 使用安全处理后的日期
+      end_pubdate // 使用安全处理后的日期
+    })
+  }
+
+  //4. 重新拉取文章列表
+  //repData依赖项发生变化，重复执行副作用函数
+
+  
+  
   return (
     <div>
       <Card
@@ -113,7 +151,7 @@ const Article = () => {
         }
         style={{ marginBottom: 20 }}
       >
-        <Form initialValues={{ status: '' }}>
+        <Form initialValues={{ status: '',channel_id: '' }} onFinish = {onFinish}>
           <Form.Item label="Status" name="status">
             <Radio.Group>
               <Radio value={''}>All</Radio>
@@ -125,9 +163,11 @@ const Article = () => {
           <Form.Item label="Channel" name="channel_id">
             <Select
               placeholder="Please select channel"
-              defaultValue="lucy"
+              defaultValue=""
               style={{ width: 120 }}
-            >
+            > 
+            {/* 添加 'All' 选项，对应 channel_id: '' */}
+              <Option value={''}>All</Option>
               {channel.map(item => <Option key={item.id}value={item.id}>{item.name}</Option>)}
               
             </Select>
