@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Card, Breadcrumb, Form, Button, Radio, DatePicker, Select } from 'antd'
+import { Card, Breadcrumb, Form, Button, Radio, DatePicker, Select,Popconfirm } from 'antd'
 import locale from 'antd/es/date-picker/locale/en_US'
 
 const { Option } = Select
@@ -9,7 +9,7 @@ import { Table, Tag, Space } from 'antd'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import img404 from 'D:/reactStudy/react-blog/src/assets/spiderman.jpg'
 import { useChannel } from '@/hooks/useChannel'
-import { getArticleListAPI } from '@/apis/articles'
+import { getArticleListAPI,deleteArticleListAPI } from '@/apis/articles'
 import { useState, useEffect } from 'react'
 const Article = () => {
   const {channel} = useChannel()
@@ -62,32 +62,26 @@ const Article = () => {
         return (
           <Space size="middle">
             <Button type="primary" shape="circle" icon={<EditOutlined />} />
-            <Button
-              type="primary"
-              danger
-              shape="circle"
-              icon={<DeleteOutlined />}
-            />
+            <Popconfirm
+              title="Delete the task"
+              description="Are you sure to delete this task?"
+              onConfirm={() => onConfirm(data)}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button
+                type="primary"
+                danger
+                shape="circle"
+                icon={<DeleteOutlined />}
+              />
+            </Popconfirm>
           </Space>
         )
       }
     }
   ]
-  // 准备表格body数据
-  const data = [
-    {
-      id: '8218',
-      comment_count: 0,
-      cover: {
-        images: [],
-      },
-      like_count: 0,
-      pubdate: '2019-03-11 09:00:00',
-      read_count: 2,
-      status: 2,
-      title: 'wkwebview离线化加载h5资源解决方案'
-    }
-  ]
+  
 
   //筛选功能
   //1.准备参数
@@ -147,7 +141,16 @@ const Article = () => {
       page
     })
   }
-   
+  
+  //点击删除图表的函数onConfirm逻辑
+  const onConfirm = async (data)=>{
+      const id = data.id
+      await deleteArticleListAPI(id)
+      //只要触发repData修改，然后触发渲染
+      setRepData({
+        ...repData
+      })
+  }
   
   return (
     <div>

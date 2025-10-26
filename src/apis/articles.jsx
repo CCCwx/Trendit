@@ -28,3 +28,11 @@ export function getArticleListAPI(params){
         params
     })
 }
+
+//4. 删除特定文章
+export function deleteArticleListAPI(id){
+    return request({
+        url:`mp/articles/${id}`,
+        method:'DELETE'
+    })
+}
