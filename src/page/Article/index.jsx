@@ -137,8 +137,17 @@ const Article = () => {
 
   //4. 重新拉取文章列表
   //repData依赖项发生变化，重复执行副作用函数
-
   
+  //返回当前点击页数page
+  const onPageChange = (page) =>{
+    console.log(page)
+    //借助修改参数依赖项引发数据的重新获取，进而渲染
+    setRepData({
+      ...repData,
+      page
+    })
+  }
+   
   
   return (
     <div>
@@ -188,7 +197,11 @@ const Article = () => {
 
       {/*表格区域 */}
       <Card title={`根据筛选条件共查询到 ${count} 条结果：`}>
-        <Table rowKey="id" columns={columns} dataSource={articleList} />
+        <Table rowKey="id" columns={columns} dataSource={articleList} pagination={{
+          total:count, //总条数
+          pageSize: repData.per_page, //一个页数的数据个数
+          onChange:onPageChange
+        }}/>
       </Card>
     </div>
   )
