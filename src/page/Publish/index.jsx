@@ -10,12 +10,12 @@ import {
   Select
 } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import './index.scss'
 import ReactQuill from 'react-quill-new'         // 1. JS组件来自 new 包
 import 'quill/dist/quill.snow.css'        // 2. CSS样式来自 old 包
 import { useEffect, useState } from 'react'
-import { createArticleAPI, getChannelAPI } from '@/apis/articles'
+import { createArticleAPI, getChannelAPI,getArticleAPI } from '@/apis/articles'
 import { message } from 'antd'
 import { useChannel } from '@/hooks/useChannel'
 const { Option } = Select
@@ -58,6 +58,52 @@ const Publish = () => {
     setCover(info.target.value)
   }
 
+  //回填数据
+  //这里请看react_router那里
+  const [searchParams] = useSearchParams()
+  const articleID = searchParams.get('id')
+  console.log(articleID)
+  //获取实例
+  {/*
+    我用 Form.useForm() 创建了实例 (form)。
+
+    我把这个实例通过 form={form} 绑定到了 <Form> 组件上。
+
+    现在这个表单就完全归我这个 form 实例来操控。
+
+    我调用 form.setFieldsValue({...}) 来告诉实例“请更新你的状态”。
+
+    因为实例控制着屏幕上的表单，所以屏幕上的表单数据就回填更新了。
+    
+    不能直接传入 res.data，你需要**“扁平化”或“重构”**数据结构，确保键名与 Form.Item 的 name 属性完全对应。
+
+    ==============重要=================
+    只有设置了 name 属性的 <Form.Item> 的值，才会通过 form.setFieldsValue 来更新。
+    imageList 和 covertype：它们没有被包装在 <Form.Item name="..."> 中。它们是通过独立的 useState 管理的 (const [imageList, setImageList] = useState([]), const [covertype, setCover] = useState(1))。
+
+    结论： form.setFieldsValue 不会自动更新 imageList 和 covertype 状态。
+    */}
+  const [form] = Form.useForm() //创建一个表单实例，并且将这个实例对象存储在一个react状态变量中
+  useEffect(()=>{
+    //1. 通过id获取数据
+    if (!articleID) return;
+    async function getArticleDetail(){
+      const res = await getArticleAPI(articleID)
+      form.setFieldsValue({
+        ...res.data,
+        type:res.data.cover.type
+      })
+      //回填图片({url:url})
+      setCover(res.data.cover.type)
+      setImageList(res.data.cover.images.map(url =>{
+        return {url}
+      }))
+
+    }
+    
+    getArticleDetail()
+    //2. 调用示例方法，完成回填
+  }, [articleID, form])
   return (
     <div className="publish">
       <Card
@@ -74,6 +120,7 @@ const Publish = () => {
           wrapperCol={{ span: 16 }}
           initialValues={{ type: 1 }}
           onFinish = {onFinish}
+          form={form} //将上一步创建的**“遥控器”实例**连接到你的 <Form> JSX 元素上。
         >
         {/*标题框 */}
           <Form.Item
@@ -122,6 +169,7 @@ const Publish = () => {
               name='image'
               onChange={onChange}
               maxCount={covertype}
+              fileList={imageList}
             >
               <div style={{ marginTop: 8 }}> 
                 <PlusOutlined /> 
